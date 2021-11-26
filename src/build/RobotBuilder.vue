@@ -2,33 +2,33 @@
   <div>
     <div class="top-row">
       <div class="top part">
-        <img :src="availableParts.heads[0].src" title="head" />
-        <button class="prev-selector">&#9668;</button>
-        <button class="next-selector">&#9658;</button>
+        <img :src="availableParts.heads[selectedIndices.head].src" title="head" />
+        <button @click="selectNextPart('heads', 'down')" class="prev-selector">&#9668;</button>
+        <button @click="selectNextPart('heads', 'up')" class="next-selector">&#9658;</button>
       </div>
     </div>
     <div class="middle-row">
       <div class="left part">
-        <img :src="availableParts.arms[0].src" title="left arm" />
-        <button class="prev-selector">&#9650;</button>
-        <button class="next-selector">&#9660;</button>
+        <img :src="availableParts.arms[selectedIndices.leftArm].src" title="left arm" />
+        <button @click="selectNextPart('leftArms', 'down')" class="prev-selector">&#9650;</button>
+        <button @click="selectNextPart('leftArms', 'up')" class="next-selector">&#9660;</button>
       </div>
       <div class="center part">
-        <img :src="availableParts.torsos[0].src" title="left arm" />
-        <button class="prev-selector">&#9668;</button>
-        <button class="next-selector">&#9658;</button>
+        <img :src="availableParts.torsos[selectedIndices.torso].src" title="torso" />
+        <button @click="selectNextPart('torsos', 'down')" class="prev-selector">&#9668;</button>
+        <button @click="selectNextPart('torsos', 'up')" class="next-selector">&#9658;</button>
       </div>
       <div class="right part">
-        <img :src="availableParts.arms[1].src" title="left arm" />
-        <button class="prev-selector">&#9650;</button>
-        <button class="next-selector">&#9660;</button>
+        <img :src="availableParts.arms[selectedIndices.rightArm].src" title="left arm" />
+        <button @click="selectNextPart('rightArms', 'down')" class="prev-selector">&#9650;</button>
+        <button @click="selectNextPart('rightArms', 'up')" class="next-selector">&#9660;</button>
       </div>
     </div>
     <div class="bottom-row">
       <div class="bottom part">
-        <img :src="availableParts.bases[0].src" title="left arm" />
-        <button class="prev-selector">&#9668;</button>
-        <button class="next-selector">&#9658;</button>
+        <img :src="availableParts.bases[selectedIndices.base].src" title="left arm" />
+        <button @click="selectNextPart('bases', 'down')" class="prev-selector">&#9668;</button>
+        <button @click="selectNextPart('bases', 'up')" class="next-selector">&#9658;</button>
       </div>
     </div>
   </div>
@@ -43,7 +43,66 @@ export default {
   data() {
     return {
       availableParts,
+      selectedPart: {},
+      selectedIndices: {
+        head: 0,
+        torso: 0,
+        rightArm: 0,
+        leftArm: 0,
+        base: 0,
+      },
+
+      selectedHeadIndex: 0,
+      selectedTorsoIndex: 0,
+      selectedRightArmIndex: 0,
+      selectedLeftArmIndex: 0,
+      selectedBaseIndex: 0,
     };
+  },
+
+  methods: {
+    selectNextPart(type, direction) {
+      switch (type) {
+        case 'heads':
+          this.selectedPart = { index: this.selectedIndices.head, parts: this.availableParts.heads };
+          this.selectedIndices.head = this.applyPart(this.selectedPart, direction);
+          break;
+        case 'torsos':
+          this.selectedPart = { index: this.selectedIndices.torso, parts: this.availableParts.torsos };
+          this.selectedIndices.torso = this.applyPart(this.selectedPart, direction);
+          break;
+        case 'rightArms':
+          this.selectedPart = { index: this.selectedIndices.rightArm, parts: this.availableParts.arms };
+          this.selectedIndices.rightArm = this.applyPart(this.selectedPart, direction);
+          break;
+        case 'leftArms':
+          this.selectedPart = { index: this.selectedIndices.leftArm, parts: this.availableParts.arms };
+          this.selectedIndices.leftArm = this.applyPart(this.selectedPart, direction);
+          break;
+        case 'bases':
+          this.selectedPart = { index: this.selectedIndices.base, parts: this.availableParts.bases };
+          this.selectedIndices.base = this.applyPart(this.selectedPart, direction);
+          break;
+        default:
+          break;
+      }
+    },
+    applyPart(selectedPart, direction) {
+      switch (direction) {
+        case 'up':
+          if (selectedPart.index + 1 < selectedPart.parts.length) {
+            return selectedPart.index + 1;
+          }
+          return 0;
+        case 'down':
+          if (selectedPart.index > 0) {
+            return selectedPart.index - 1;
+          }
+          return selectedPart.parts.length - 1;
+        default:
+          return 0;
+      }
+    },
   },
 };
 </script>
